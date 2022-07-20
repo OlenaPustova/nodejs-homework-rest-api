@@ -37,8 +37,25 @@ const patchContactSchema = (req, res, next) => {
   next();
 };
 
+const newUserSchema = (req, res, next) => {
+  const schemaUser = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+    subscription: Joi.string(),
+  });
+
+  const validationResult = schemaUser.validate(req.body);
+  if (validationResult.error) {
+    return res.status(400).json({
+      message: validationResult.error.details[0].message,
+    });
+  }
+  next();
+};
+
 module.exports = {
   createContactSchema,
   changeContactSchema,
   patchContactSchema,
+  newUserSchema,
 };
