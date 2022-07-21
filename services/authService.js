@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
+
 const { Conflict, Unauthorized } = require('http-errors');
 const { User } = require('../models/userModel');
 
@@ -8,7 +10,13 @@ const registration = async (email, password) => {
   if (user) {
     throw new Conflict('Email in use');
   }
-  const newUser = new User({ email, password });
+
+  const avatarURL = gravatar.url(email, {
+    s: '200',
+    r: 'pg',
+    d: '404',
+  });
+  const newUser = new User({ email, password, avatarURL });
   await newUser.save();
   return newUser;
 };
@@ -53,9 +61,23 @@ const currentUser = async (id) => {
   return user;
 };
 
+const updateAvatar = async (id, avatarURL) => {
+  console.log(id);
+  const user = await User.findByIdAndUpdate(
+    id,
+    { avatarURL: avatarURL },
+    { new: true }
+  );
+  if (!user) {
+    throw new Unauthorized('Not authorized');
+  }
+  return user;
+};
+
 module.exports = {
   registration,
   login,
   logout,
   currentUser,
+  updateAvatar,
 };
