@@ -9,15 +9,18 @@ const {
   removeContactController,
   updateContactController,
   updateStatusContactController,
-} = require('../../controllers/contactController');
+} = require('../controllers/contactController');
 
 const {
   createContactSchema,
   changeContactSchema,
   patchContactSchema,
-} = require('../../middlewares/validationMiddleware');
+} = require('../middlewares/validationMiddleware');
 
-const { catchErrors } = require('../../middlewares/catchErrors');
+const { catchErrors } = require('../middlewares/catchErrors');
+const { authMiddleware } = require('../middlewares/authMiddleware');
+
+router.use(authMiddleware);
 
 router.get('/', catchErrors(getContactsController));
 
