@@ -5,6 +5,8 @@ const { catchErrors } = require('../middlewares/catchErrors');
 
 const {
   registrationController,
+  verificationController,
+  verifyController,
   loginController,
   logoutController,
   currentUserController,
@@ -16,6 +18,8 @@ const { authMiddleware } = require('../middlewares/authMiddleware');
 const { uploadMiddleware } = require('../middlewares/uploadMiddleware');
 
 router.post('/register', newUserSchema, catchErrors(registrationController));
+router.get('/verify/:verificationToken', catchErrors(verificationController));
+router.post('/verify', catchErrors(verifyController));
 router.post('/login', newUserSchema, catchErrors(loginController));
 router.get('/logout', authMiddleware, catchErrors(logoutController));
 router.get('/current', authMiddleware, catchErrors(currentUserController));

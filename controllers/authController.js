@@ -4,6 +4,8 @@ const { compressAvatar } = require('../middlewares/compressAvatar');
 
 const {
   registration,
+  verification,
+  verify,
   login,
   logout,
   currentUser,
@@ -22,11 +24,24 @@ const registrationController = async (req, res) => {
     },
   });
 };
+const verificationController = async (req, res) => {
+  const { verificationToken } = req.params;
+  await verification(verificationToken);
+  res.status(201).json({ message: 'Verification successful' });
+};
+
+const verifyController = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400).json({ message: 'missing required field email' });
+  }
+  await verify(email);
+  res.status(200).json({ message: 'Verification email sent' });
+};
 
 const loginController = async (req, res) => {
   const { email, password } = req.body;
   const loginUser = await login(email, password);
-
   res.status(200).json({
     token: loginUser.token,
     user: { email: loginUser.email, subscription: loginUser.subscription },
@@ -61,6 +76,8 @@ const updateAvatarController = async (req, res) => {
 
 module.exports = {
   registrationController,
+  verificationController,
+  verifyController,
   loginController,
   logoutController,
   currentUserController,
